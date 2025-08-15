@@ -1,0 +1,126 @@
+<!-- Hamburger Button (Mobile only) -->
+<div class="fixed top-4 left-4 z-20 sm:hidden">
+  <button
+    class="bg-[#3B7A57] text-white p-2 rounded-md"
+    (click)="toggleSidebar()"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+</div>
+
+<!-- Overlay (only visible on mobile when sidebar is open) -->
+<div
+  *ngIf="sidebarOpen"
+  class="fixed inset-0 bg-black opacity-50 z-10 sm:hidden"
+  (click)="toggleSidebar()"
+></div>
+
+<div
+  class="fixed top-0 left-0 h-full w-60 bg-[#b9ddbe] text-[#2B5D46] shadow-lg p-4 flex flex-col z-20 transform transition-transform duration-300 sm:translate-x-0"
+  [ngClass]="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+>
+
+  <button
+    class="bg-[#3B7A57] text-white py-2 px-3 rounded-lg mb-4 hover:bg-[#2B5D46]"
+    (click)="startNewChat()"
+  >
+    + New Chat
+  </button>
+
+  <h3 class="text-lg font-semibold mb-2">History</h3>
+
+  <div class="flex-1 overflow-y-auto space-y-2">
+    <div
+      *ngFor="let chat of chatHistory"
+      class="p-2 bg-white rounded-lg text-[#2B5D46] shadow hover:bg-[#A9DAB2] cursor-pointer"
+      (click)="openChat(chat)"
+    >
+      {{ chat.title }}
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="ml-0 sm:ml-60 flex flex-col items-center justify-center min-h-screen bg-[#c9eccc] text-[#2B5D46] p-4 relative">
+
+  <!-- Sign in -->
+  <div class="absolute top-4 right-4">
+    <button
+      (click)="signInWithGoogle()"
+      class="flex items-center gap-2 bg-[#c9eccc] text-[#2B5D46] px-4 py-2 rounded-lg shadow hover:bg-[#A9DAB2] transition border border-[#357541]"
+    >
+      <img src="assets/images/google.png" alt="Google Logo" class="w-5 h-5" />
+      <span class="text-sm font-medium">Sign in</span>
+    </button>
+  </div>
+
+  <!-- Logo & Title -->
+  <div class="flex flex-col sm:flex-row items-center gap-3 mb-4 mt-16 sm:mt-10 text-center sm:text-left">
+    <img src="assets/images/ecowise.png" alt="Ecowise Logo" class="w-16 h-16 sm:w-12 sm:h-12 rounded-full border-2 border-[#3B7A57]">
+    <h1 class="text-3xl font-bold text-[#2B5D46]">EcoWise+</h1>
+  </div>
+
+  <!-- Welcome Message -->
+  <p class="text-[#2B5D46] mb-6 text-center text-lg px-4">
+    HI, how can I help you today?
+  </p>
+
+  <!-- Categories -->
+  <div class="mb-6 flex flex-wrap justify-center gap-2 w-full sm:w-auto">
+    <button
+      *ngFor="let cat of categories"
+      (click)="sendToWatson(cat)"
+      class="px-4 py-2 rounded-lg border border-[#3B7A57] hover:bg-[#A9DAB2] text-sm sm:text-base flex-1 sm:flex-none text-center"
+      [class.bg-[#3B7A57]]="selectedCategory === cat"
+      [class.text-white]="selectedCategory === cat"
+    >
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- Response Box -->
+  <div *ngIf="watsonResponse" class="mt-6 p-4 bg-white border border-[#A9DAB2] rounded-lg max-w-xl w-full px-4 text-[#2B5D46]">
+    <p class="whitespace-pre-wrap text-sm sm:text-base">{{ watsonResponse }}</p>
+  </div>
+
+  <!-- Mobile Search Bar -->
+  <div class="sm:hidden fixed bottom-4 left-4 right-4">
+    <div class="flex items-center w-full bg-white rounded-full px-4 py-2 border border-[#3B7A57]">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="sendToWatson(searchQuery)"
+        placeholder="Type your query here..."
+        class="flex-1 bg-transparent text-[#2B5D46] placeholder-[#2B5D46] focus:outline-none"
+      />
+      <button
+        (click)="sendToWatson(searchQuery)"
+        class="ml-24 w-8 h-8 bg-[#3B7A57] rounded-lg flex items-center justify-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Desktop Search Bar -->
+  <div class="hidden sm:flex flex-col ml-6 sm:flex-row gap-2 w-full sm:w-auto mt-6">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="sendToWatson(searchQuery)"
+      placeholder="Type your query here..."
+      class="border border-[#3B7A57] rounded-lg p-2 w-full sm:w-80 bg-white text-[#2B5D46] placeholder-[#2B5D46] focus:outline-none focus:ring-2 focus:ring-[#A9DAB2]"
+    />
+    <button
+      (click)="sendToWatson(searchQuery)"
+      class="bg-[#3B7A57] text-white px-4 py-2 rounded-lg hover:bg-[#2B5D46]"
+    >
+      Search
+    </button>
+  </div>
+
+</div>  <!-- end of main content -->

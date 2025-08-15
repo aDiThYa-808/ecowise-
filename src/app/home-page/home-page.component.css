@@ -1,0 +1,16 @@
+/* Make buttons stack nicely on small screens */
+@media (max-width: 640px) {
+  button {
+    width: 100%;
+    text-align: center;
+  }
+}
+/* Highlight active chat in history */
+.chat-item-active {
+  background-color: #3B7A57;
+  color: white;
+}
+.chat-item-active {
+  background-color: #2563EB;
+  color: white;
+}

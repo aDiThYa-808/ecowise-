@@ -1,101 +1,203 @@
-import { Component } from '@angular/core';
+// src/app/home-page/home-page.component.ts
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { interval, Subscription } from 'rxjs';
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css']
 })
-export class HomePageComponent {
-  searchQuery: string = '';
-  watsonResponse: string = '';
-  selectedCategory: string = '';
+export class HomePageComponent implements AfterViewChecked, OnInit, OnDestroy {
+  @ViewChild('scrollAnchor') scrollAnchor!: ElementRef;
+
+  currentMessage: string = '';
+  messages: ChatMessage[] = [];
+  isLoading: boolean = false;
   categories: string[] = ['Water Pollution', 'Air Pollution', 'Noise Pollution', 'Soil Pollution'];
+  
+  // Health check properties
+  isServerHealthy: boolean = true;
+  isCheckingHealth: boolean = false;
+  healthCheckSubscription: Subscription | null = null;
 
-  // Sidebar open/close
-  sidebarOpen: boolean = false;
+  constructor(
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
+  ) {}
 
-  // Chat History
-  chatHistory: any[] = [
-    { id: 1, title: 'Welcome Chat' }
-  ];
-  currentChatId: number = 1;
-
-  // Watson credentials
-  private watsonUrl = 'https://api.eu-gb.assistant.watson.cloud.ibm.com/v2/assistants/YOUR_ASSISTANT_ID/sessions';
-  private watsonApiKey = 'YOUR_API_KEY';
-  private watsonVersion = '2021-06-14';
-
-  constructor(private http: HttpClient) {}
-
-  // Toggle sidebar
-toggleSidebar() {
-  this.sidebarOpen = !this.sidebarOpen;
-  if (this.sidebarOpen) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
-}
-
-
-  sendToWatson(query: string) {
-    if (!query.trim()) return;
-
-    this.selectedCategory = query;
-
-    const authHeader = 'Basic ' + btoa(`apikey:${this.watsonApiKey}`);
-
-    // Create session
-    this.http.post<any>(
-      `${this.watsonUrl}?version=${this.watsonVersion}`,
-      {},
-      { headers: new HttpHeaders({ Authorization: authHeader }) }
-    ).subscribe(sessionRes => {
-      const sessionId = sessionRes.session_id;
-      // Send message
-      this.http.post<any>(
-        `https://api.eu-gb.assistant.watson.cloud.ibm.com/v2/assistants/YOUR_ASSISTANT_ID/sessions/${sessionId}/message?version=${this.watsonVersion}`,
-        { input: { message_type: 'text', text: query } },
-        { headers: new HttpHeaders({ Authorization: authHeader }) }
-      ).subscribe(res => {
-        const outputText = res.output.generic.map((g: any) => g.text).join('\n');
-        this.watsonResponse = outputText || 'No response from Watson.';
-        this.updateCurrentChatTitle(query);
-      });
+  ngOnInit() {
+    // Check server health immediately on component load
+    this.checkServerHealth();
+    
+    // Set up periodic health checks every 30 seconds
+    this.healthCheckSubscription = interval(30000).subscribe(() => {
+      this.checkServerHealth();
     });
   }
 
-  updateCurrentChatTitle(query: string) {
-    const chatIndex = this.chatHistory.findIndex(c => c.id === this.currentChatId);
-    if (chatIndex !== -1 && !this.chatHistory[chatIndex].title) {
-      this.chatHistory[chatIndex].title = query.slice(0, 20) + (query.length > 20 ? '...' : '');
+  ngOnDestroy() {
+    // Clean up subscription to prevent memory leaks
+    if (this.healthCheckSubscription) {
+      this.healthCheckSubscription.unsubscribe();
     }
   }
 
-  startNewChat() {
-    this.currentChatId = this.chatHistory.length + 1;
-    this.chatHistory.push({ id: this.currentChatId, title: 'New Chat' });
-    this.searchQuery = '';
-    this.watsonResponse = '';
-    this.selectedCategory = '';
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
-  openChat(chat: any) {
-    this.currentChatId = chat.id;
-    this.watsonResponse = `Opened ${chat.title}`;
+  checkServerHealth(): void {
+    this.isCheckingHealth = true;
+    
+    this.http.get('http://localhost:3000/api/health', {
+      responseType: 'text', // Expect text response, not JSON
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).subscribe({
+      next: (response) => {
+        console.log('Health check successful:', response);
+        this.isServerHealthy = true;
+        this.isCheckingHealth = false;
+      },
+      error: (error) => {
+        console.error('Health check failed:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error
+        });
+        this.isServerHealthy = false;
+        this.isCheckingHealth = false;
+      }
+    });
   }
 
-  signInWithGoogle() {
-    console.log('Google Sign-In clicked!');
-    alert('Google Sign-In integration coming soon!');
+  // Simple method to format basic markdown without external libraries
+  formatMessage(content: string): SafeHtml {
+    let formattedContent = content
+      // Convert **text** to <strong>text</strong>
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Convert *text* to <em>text</em>
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Convert numbered lists (1. text)
+      .replace(/^\d+\.\s+(.+)$/gm, '<div class="list-item numbered">$1</div>')
+      // Convert bullet points (- text or • text)
+      .replace(/^[-•]\s+(.+)$/gm, '<div class="list-item bullet">$1</div>')
+      // Convert line breaks to <br>
+      .replace(/\n/g, '<br>');
+
+    return this.sanitizer.bypassSecurityTrustHtml(formattedContent);
   }
 
-  showKeyboard() {
-    const inputEl = document.querySelector<HTMLInputElement>('input[type="text"]');
-    if (inputEl) {
-      setTimeout(() => inputEl.focus(), 50);
+  sendMessage(message: string) {
+    // Check if server is healthy before sending message
+    if (!this.isServerHealthy) {
+      this.checkServerHealth(); // Try to reconnect
+      return;
+    }
+
+    if (!message || !message.trim() || this.isLoading) return;
+
+    // Add user message to chat
+    this.messages.push({
+      role: 'user',
+      content: message.trim(),
+      timestamp: new Date()
+    });
+
+    // Clear input
+    this.currentMessage = '';
+    this.isLoading = true;
+
+    // Call backend
+    this.http.post<any>(
+      'http://localhost:3000/watsonx/query',
+      { prompt: message.trim() },
+      {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        })
+      }
+    ).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.isServerHealthy = true; // Server responded, so it's healthy
+        
+        // Add assistant response to chat
+        let assistantMessage = '';
+        if (response.success && response.data) {
+          assistantMessage = response.data.message || 'No response from AI.';
+        } else if (response.message) {
+          assistantMessage = response.message || 'No response from AI.';
+        } else {
+          assistantMessage = 'Unexpected response format from server.';
+        }
+
+        this.messages.push({
+          role: 'assistant',
+          content: assistantMessage,
+          timestamp: new Date()
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error calling backend:', error);
+        
+        // Check if error is due to server being down
+        if (error.status === 0) {
+          this.isServerHealthy = false;
+        }
+
+        let errorMessage = '';
+        if (error.status === 400) {
+          errorMessage = 'Please provide a valid question.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (error.status === 0) {
+          errorMessage = 'Cannot connect to server. Please check if the server is running.';
+        } else {
+          errorMessage = `Error: ${error.error?.message || 'Something went wrong'}`;
+        }
+
+        this.messages.push({
+          role: 'assistant',
+          content: errorMessage,
+          timestamp: new Date()
+        });
+      }
+    });
+  }
+
+  // Manual retry button for when server is down
+  retryConnection(): void {
+    this.checkServerHealth();
+  }
+
+  private scrollToBottom(): void {
+    try {
+      if (this.scrollAnchor) {
+        this.scrollAnchor.nativeElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end'
+        });
+      }
+    } catch (err) {
+      console.log('Scroll error:', err);
     }
   }
-  
+
+  // Clear chat history (optional - you can add a button for this)
+  clearChat() {
+    this.messages = [];
+  }
 }

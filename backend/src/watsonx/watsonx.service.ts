@@ -43,7 +43,7 @@ export class WatsonxService {
 
             return res.data.access_token;
         }
-        catch(err){
+        catch(err:any){
             console.error('failed to get IAM token: ',err);
             throw new InternalServerErrorException('failed to authenticate with watsonx')
         }
@@ -113,7 +113,7 @@ export class WatsonxService {
            return this.cleanResponse(res.data);
 
         }
-        catch(err){
+        catch(err:any){
             if(axios.isAxiosError(err)){
                 console.error('Error calling watsonx',err.response?.data || err.message);
             }

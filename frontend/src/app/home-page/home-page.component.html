@@ -29,7 +29,7 @@
   </div>
 
   <!-- Chat Messages Area -->
-  <div class="flex-1 overflow-y-auto p-2 xs:p-3 sm:p-4 space-y-2 xs:space-y-3 sm:space-y-4 min-h-0">
+  <div class="flex-1 overflow-y-auto p-2 xs:p-3 sm:p-4 space-y-2 xs:space-y-3 sm:space-y-4 min-h-0 pb-20 xs:pb-24 sm:pb-20">
     
     <!-- Welcome Message -->
     <div *ngIf="messages.length === 0" class="text-center text-[#2B5D46] py-4 xs:py-6 sm:py-8 px-2">
@@ -107,7 +107,7 @@
   </div>
 
   <!-- Input Area -->
-  <div class="p-2 xs:p-3 sm:p-4 bg-white border-t border-[#A9DAB2] shadow-lg flex-shrink-0 safe-area-inset-bottom">
+  <div class="fixed bottom-0 left-0 right-0 p-2 xs:p-3 sm:p-4 bg-white border-t border-[#A9DAB2] shadow-lg z-10 safe-area-inset-bottom">
     <div class="flex gap-2 xs:gap-3 sm:gap-2 max-w-4xl mx-auto items-end">
       <div class="flex-1 min-w-0">
         <input

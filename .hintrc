@@ -19,7 +19,8 @@
       "default",
       {
         "ignore": [
-          "image-rendering: crisp-edges"
+          "image-rendering: crisp-edges",
+          "hyphens"
         ]
       }
     ]

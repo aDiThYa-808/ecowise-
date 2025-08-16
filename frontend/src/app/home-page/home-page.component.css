@@ -20,7 +20,7 @@
 
 /* Safe area insets for modern devices */
 .safe-area-inset-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: max(env(safe-area-inset-bottom), 8px);
 }
 .safe-area-inset-top {
   padding-top: env(safe-area-inset-top);
@@ -39,4 +39,38 @@ input:focus {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Mobile optimizations */
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+/* Touch targets for mobile */
+button {
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better mobile scrolling */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive text sizing for very small screens */
+@media (max-width: 320px) {
+  .text-xs { font-size: 0.7rem; }
+  .text-sm { font-size: 0.8rem; }
+  .p-2 { padding: 0.375rem; }
+  .px-3 { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+}
+
+/* Better spacing for landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .py-6 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .py-8 { padding-top: 1rem; padding-bottom: 1rem; }
+  .mb-6 { margin-bottom: 0.75rem; }
+  .space-y-4 > * + * { margin-top: 0.5rem; }
 }

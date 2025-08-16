@@ -21,7 +21,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
 
-    "types": ["node"],
     "lib": ["ES2022", "DOM"],
     "resolveJsonModule": true
   },

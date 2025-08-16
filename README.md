@@ -1,5 +1,7 @@
 # EcoWise+
 
+> **NOTE:** **This is a forked repository for deployment. I was the backend developer for the original project.**
+
 A basic prototype chatbot assistant that answers questions about pollution control. Built with Angular frontend and NestJS backend, powered by IBM Watson AI.
 
 **Note:** This is a minimal working prototype and not a production-ready application.
@@ -162,3 +164,4 @@ This prototype serves as the foundation for a full-fledged AI assistant for poll
 ## Contributing
 
 This is a prototype project. For any issues or suggestions, please contact the development team.
+

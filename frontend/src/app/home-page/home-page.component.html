@@ -1,67 +1,67 @@
-<!-- Simple Chat Interface -->
-<div class="flex flex-col h-screen bg-[#c9eccc]">
+<!-- Fully Responsive Chat Interface -->
+<div class="flex flex-col h-screen bg-[#c9eccc] relative">
   
   <!-- Server Status Banner (shown when server is down) -->
-  <div *ngIf="!isServerHealthy" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-3 sm:p-4 shadow-lg animate-pulse">
-    <div class="flex items-center justify-center max-w-4xl mx-auto gap-3">
-      <div class="text-xl sm:text-2xl">⚠️</div>
-      <div class="flex-1 text-center sm:text-left">
-        <h3 class="text-sm sm:text-base font-semibold">Server Connection Lost</h3>
-        <p class="text-xs sm:text-sm opacity-90 mt-1">Please wait while we try to reconnect...</p>
+  <div *ngIf="!isServerHealthy" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 xs:p-3 sm:p-4 shadow-lg animate-pulse z-10">
+    <div class="flex items-center justify-center max-w-7xl mx-auto gap-2 xs:gap-3">
+      <div class="text-lg xs:text-xl sm:text-2xl flex-shrink-0">⚠️</div>
+      <div class="flex-1 text-center xs:text-left min-w-0">
+        <h3 class="text-xs xs:text-sm sm:text-base font-semibold truncate">Server Connection Lost</h3>
+        <p class="text-xs xs:text-xs sm:text-sm opacity-90 mt-0.5 xs:mt-1 hidden xs:block">Please wait while we try to reconnect...</p>
       </div>
       <button 
         (click)="retryConnection()" 
         [disabled]="isCheckingHealth"
-        class="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-white border-opacity-30">
+        class="bg-white bg-opacity-20 hover:bg-opacity-30 px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 rounded-md xs:rounded-lg text-xs xs:text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-white border-opacity-30 flex-shrink-0 whitespace-nowrap">
         {{ isCheckingHealth ? 'Checking...' : 'Retry' }}
       </button>
     </div>
   </div>
 
   <!-- Header -->
-  <div class="bg-[#3B7A57] text-white p-3 sm:p-6 text-center shadow-md">
-    <h1 class="text-lg sm:text-2xl lg:text-3xl font-bold">EcoWise+</h1>
-    <p class="text-xs sm:text-sm opacity-90 mt-1">Your Environmental Assistant</p>
+  <div class="bg-[#3B7A57] text-white p-3 xs:p-4 sm:p-6 text-center shadow-md flex-shrink-0">
+    <h1 class="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-bold">EcoWise+</h1>
+    <p class="text-xs xs:text-sm sm:text-sm opacity-90 mt-0.5 xs:mt-1">Your Environmental Assistant</p>
     <!-- Server status indicator in header -->
-    <div *ngIf="!isServerHealthy" class="mt-2 text-xs opacity-80">
+    <div *ngIf="!isServerHealthy" class="mt-1 xs:mt-2 text-xs opacity-80">
       🔴 Server Offline
     </div>
   </div>
 
   <!-- Chat Messages Area -->
-  <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
+  <div class="flex-1 overflow-y-auto p-2 xs:p-3 sm:p-4 space-y-2 xs:space-y-3 sm:space-y-4 min-h-0">
     
     <!-- Welcome Message -->
-    <div *ngIf="messages.length === 0" class="text-center text-[#2B5D46] py-6 sm:py-8">
-      <div class="mb-6">
-        <img src="assets/images/ecowise.png" alt="EcoWise" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full border-2 border-[#3B7A57] shadow-sm">
+    <div *ngIf="messages.length === 0" class="text-center text-[#2B5D46] py-4 xs:py-6 sm:py-8 px-2">
+      <div class="mb-4 xs:mb-6">
+        <img src="assets/images/ecowise.png" alt="EcoWise" class="w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 mx-auto rounded-full border-2 border-[#3B7A57] shadow-sm">
       </div>
-      <h2 class="text-xl sm:text-2xl font-semibold mb-3">Welcome to EcoWise+!</h2>
-      <p class="mb-6 text-base sm:text-lg px-4 leading-relaxed">
+      <h2 class="text-lg xs:text-xl sm:text-2xl font-semibold mb-2 xs:mb-3 px-2">Welcome to EcoWise+!</h2>
+      <p class="mb-4 xs:mb-6 text-sm xs:text-base sm:text-lg px-2 xs:px-4 leading-relaxed max-w-md mx-auto">
         {{ !isServerHealthy ? 'Please wait while we connect to the server...' : 'How can I help you create a cleaner, greener future today?' }}
       </p>
       
       <!-- Quick Category Buttons -->
-      <div *ngIf="isServerHealthy" class="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 sm:gap-2 max-w-sm sm:max-w-md mx-auto px-4">
+      <div *ngIf="isServerHealthy" class="grid grid-cols-1 xs:grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 xs:gap-3 sm:gap-2 max-w-xs xs:max-w-sm sm:max-w-md lg:max-w-lg mx-auto px-2 xs:px-4">
         <button
           *ngFor="let cat of categories"
           (click)="sendMessage(cat)"
           [disabled]="isLoading || !isServerHealthy"
-          class="w-full sm:w-auto px-4 py-3 sm:px-3 sm:py-2 text-sm sm:text-sm text-[#3B7A57] bg-white rounded-xl sm:rounded-lg border border-[#3B7A57] hover:bg-[#A9DAB2] hover:text-white disabled:opacity-50 transition-colors shadow-sm font-medium"
+          class="w-full xs:w-auto sm:flex-1 px-3 py-2.5 xs:px-4 xs:py-3 sm:px-3 sm:py-2 text-xs xs:text-sm sm:text-sm text-[#3B7A57] bg-white rounded-lg xs:rounded-xl sm:rounded-lg border border-[#3B7A57] hover:bg-[#A9DAB2] hover:text-white disabled:opacity-50 transition-colors shadow-sm font-medium active:scale-95 touch-manipulation"
         >
           {{ cat }}
         </button>
       </div>
 
       <!-- Server down message for welcome screen -->
-      <div *ngIf="!isServerHealthy" class="bg-white rounded-xl p-4 sm:p-6 max-w-sm mx-auto shadow-sm border border-red-200">
-        <div class="text-red-500 mb-2">🔌</div>
-        <h3 class="text-base sm:text-lg font-semibold text-red-600 mb-2">Server Unavailable</h3>
-        <p class="text-sm text-gray-600 mb-3">We're having trouble connecting to our servers. Please wait while we work on reconnecting.</p>
+      <div *ngIf="!isServerHealthy" class="bg-white rounded-lg xs:rounded-xl p-3 xs:p-4 sm:p-6 max-w-xs xs:max-w-sm mx-auto shadow-sm border border-red-200 mt-4">
+        <div class="text-red-500 mb-2 text-lg xs:text-xl">🔌</div>
+        <h3 class="text-sm xs:text-base sm:text-lg font-semibold text-red-600 mb-2">Server Unavailable</h3>
+        <p class="text-xs xs:text-sm text-gray-600 mb-3 leading-relaxed">We're having trouble connecting to our servers. Please wait while we work on reconnecting.</p>
         <button 
           (click)="retryConnection()" 
           [disabled]="isCheckingHealth"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          class="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-3 py-2 xs:px-4 xs:py-2 rounded-md xs:rounded-lg text-xs xs:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 touch-manipulation w-full xs:w-auto">
           {{ isCheckingHealth ? 'Reconnecting...' : 'Try Again' }}
         </button>
       </div>
@@ -71,32 +71,32 @@
     <div *ngFor="let message of messages" class="w-full">
       
       <!-- User Message -->
-      <div *ngIf="message.role === 'user'" class="flex justify-end mb-3">
-        <div class="bg-[#3B7A57] text-white rounded-2xl sm:rounded-lg px-4 py-3 sm:px-4 sm:py-2 max-w-[85%] sm:max-w-xs md:max-w-md break-words text-base sm:text-base shadow-sm">
+      <div *ngIf="message.role === 'user'" class="flex justify-end mb-2 xs:mb-3 px-1">
+        <div class="bg-[#3B7A57] text-white rounded-2xl xs:rounded-2xl sm:rounded-lg px-3 py-2 xs:px-4 xs:py-3 sm:px-4 sm:py-2 max-w-[90%] xs:max-w-[85%] sm:max-w-xs md:max-w-md lg:max-w-lg break-words text-sm xs:text-base sm:text-base shadow-sm">
           {{ message.content }}
         </div>
       </div>
 
       <!-- Assistant Message -->
-      <div *ngIf="message.role === 'assistant'" class="flex justify-start mb-3">
-        <div class="bg-white border border-[#A9DAB2] rounded-2xl sm:rounded-lg px-4 py-4 sm:px-4 sm:py-3 max-w-[85%] sm:max-w-xs md:max-w-md break-words shadow-sm">
-          <div class="flex items-start gap-3">
-            <img src="assets/images/ecowise.png" alt="EcoWise" class="w-6 h-6 sm:w-6 sm:h-6 rounded-full flex-shrink-0 mt-0.5">
-            <div [innerHTML]="formatMessage(message.content)" class="text-base sm:text-sm text-[#2B5D46] leading-relaxed formatted-content"></div>
+      <div *ngIf="message.role === 'assistant'" class="flex justify-start mb-2 xs:mb-3 px-1">
+        <div class="bg-white border border-[#A9DAB2] rounded-2xl xs:rounded-2xl sm:rounded-lg px-3 py-3 xs:px-4 xs:py-4 sm:px-4 sm:py-3 max-w-[90%] xs:max-w-[85%] sm:max-w-xs md:max-w-md lg:max-w-lg break-words shadow-sm">
+          <div class="flex items-start gap-2 xs:gap-3">
+            <img src="assets/images/ecowise.png" alt="EcoWise" class="w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 rounded-full flex-shrink-0 mt-0.5">
+            <div [innerHTML]="formatMessage(message.content)" class="text-sm xs:text-base sm:text-sm text-[#2B5D46] leading-relaxed formatted-content min-w-0 flex-1"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Loading Message -->
-    <div *ngIf="isLoading" class="flex justify-start mb-3">
-      <div class="bg-white border border-[#A9DAB2] rounded-2xl sm:rounded-lg px-4 py-4 sm:px-4 sm:py-3 max-w-[85%] sm:max-w-xs md:max-w-md shadow-sm">
-        <div class="flex items-center gap-3">
-          <img src="assets/images/ecowise.png" alt="EcoWise" class="w-6 h-6 sm:w-6 sm:h-6 rounded-full">
+    <div *ngIf="isLoading" class="flex justify-start mb-2 xs:mb-3 px-1">
+      <div class="bg-white border border-[#A9DAB2] rounded-2xl xs:rounded-2xl sm:rounded-lg px-3 py-3 xs:px-4 xs:py-4 sm:px-4 sm:py-3 max-w-[90%] xs:max-w-[85%] sm:max-w-xs md:max-w-md shadow-sm">
+        <div class="flex items-center gap-2 xs:gap-3">
+          <img src="assets/images/ecowise.png" alt="EcoWise" class="w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 rounded-full flex-shrink-0">
           <div class="flex items-center space-x-1">
-            <div class="animate-bounce w-2 h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full"></div>
-            <div class="animate-bounce w-2 h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full" style="animation-delay: 0.1s"></div>
-            <div class="animate-bounce w-2 h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full" style="animation-delay: 0.2s"></div>
+            <div class="animate-bounce w-1.5 h-1.5 xs:w-2 xs:h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full"></div>
+            <div class="animate-bounce w-1.5 h-1.5 xs:w-2 xs:h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full" style="animation-delay: 0.1s"></div>
+            <div class="animate-bounce w-1.5 h-1.5 xs:w-2 xs:h-2 sm:w-2 sm:h-2 bg-[#3B7A57] rounded-full" style="animation-delay: 0.2s"></div>
           </div>
         </div>
       </div>
@@ -107,36 +107,44 @@
   </div>
 
   <!-- Input Area -->
-  <div class="p-4 sm:p-4 bg-white border-t border-[#A9DAB2] shadow-lg">
-    <div class="flex gap-3 sm:gap-2 max-w-4xl mx-auto">
-      <input
-        type="text"
-        [(ngModel)]="currentMessage"
-        (keyup.enter)="sendMessage(currentMessage)"
-        [disabled]="isLoading || !isServerHealthy"
-        [placeholder]="!isServerHealthy ? 'Server is offline - please wait...' : 'Ask about pollution, recycling, energy...'"
-        class="flex-1 bg-white text-[#2B5D46] border-2 border-[#3B7A57] rounded-2xl sm:rounded-lg px-4 py-3 sm:px-4 sm:py-2 text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#A9DAB2] focus:border-[#A9DAB2] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 placeholder-[#A9DAB2] placeholder:text-sm shadow-sm"
-        [class.border-red-300]="!isServerHealthy"
-        [class.border-[#3B7A57]]="isServerHealthy"
-      />
+  <div class="p-2 xs:p-3 sm:p-4 bg-white border-t border-[#A9DAB2] shadow-lg flex-shrink-0 safe-area-inset-bottom">
+    <div class="flex gap-2 xs:gap-3 sm:gap-2 max-w-4xl mx-auto items-end">
+      <div class="flex-1 min-w-0">
+        <input
+          type="text"
+          [(ngModel)]="currentMessage"
+          (keyup.enter)="sendMessage(currentMessage)"
+          [disabled]="isLoading || !isServerHealthy"
+          [placeholder]="!isServerHealthy ? 'Server is offline - please wait...' : 'Ask about pollution, recycling, energy...'"
+          class="w-full bg-white text-[#2B5D46] border-2 border-[#3B7A57] rounded-xl xs:rounded-2xl sm:rounded-lg px-3 py-2.5 xs:px-4 xs:py-3 sm:px-4 sm:py-2 text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#A9DAB2] focus:border-[#A9DAB2] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 placeholder-[#A9DAB2] placeholder:text-xs xs:placeholder:text-sm shadow-sm resize-none min-h-[40px] xs:min-h-[48px] sm:min-h-[44px] touch-manipulation"
+          [class.border-red-300]="!isServerHealthy"
+          [class.border-[#3B7A57]]="isServerHealthy"
+        />
+      </div>
       <button
         (click)="sendMessage(currentMessage)"
         [disabled]="isLoading || !currentMessage.trim() || !isServerHealthy"
-        class="bg-[#3B7A57] text-white px-6 py-3 sm:px-6 sm:py-2 text-base sm:text-base rounded-2xl sm:rounded-lg hover:bg-[#2B5D46] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 transition-colors whitespace-nowrap font-semibold shadow-sm min-w-[70px]"
+        class="bg-[#3B7A57] text-white px-4 py-2.5 xs:px-5 xs:py-3 sm:px-6 sm:py-2 text-sm xs:text-base sm:text-base rounded-xl xs:rounded-2xl sm:rounded-lg hover:bg-[#2B5D46] active:bg-[#1F4A37] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 transition-colors whitespace-nowrap font-semibold shadow-sm min-w-[60px] xs:min-w-[70px] flex-shrink-0 touch-manipulation active:scale-95 min-h-[40px] xs:min-h-[48px] sm:min-h-[44px] flex items-center justify-center"
         [class.bg-gray-400]="!isServerHealthy"
         [class.bg-[#3B7A57]]="isServerHealthy"
       >
-        {{ isLoading ? '...' : (!isServerHealthy ? 'Offline' : 'Send') }}
+        <span class="hidden xs:inline">{{ isLoading ? '...' : (!isServerHealthy ? 'Offline' : 'Send') }}</span>
+        <span class="xs:hidden">{{ isLoading ? '...' : (!isServerHealthy ? '✗' : '→') }}</span>
       </button>
     </div>
     
     <!-- Server status message in input area -->
-    <div *ngIf="!isServerHealthy" class="text-center mt-2 text-sm text-red-500">
+    <div *ngIf="!isServerHealthy" class="text-center mt-2 text-xs xs:text-sm text-red-500 px-2">
       🔴 Waiting for server connection...
     </div>
     
-    <!-- Mobile keyboard padding -->
-    <div class="h-2 sm:h-0"></div>
+    <!-- Mobile keyboard padding and safe area -->
+    <div class="h-1 xs:h-2 sm:h-0"></div>
   </div>
 
 </div>
+
+<style>
+/* Custom breakpoint for very small screens */
+
+</style>

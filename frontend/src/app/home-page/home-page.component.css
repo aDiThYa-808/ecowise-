@@ -234,9 +234,6 @@
   }
 }
 
-/* =================================
-   HIGH DPI AND DISPLAY OPTIMIZATIONS
-   ================================= */
 
 /* High DPI displays (Retina, etc.) */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
@@ -251,9 +248,6 @@
   /* Add dark mode styles here if needed */
 }
 
-/* =================================
-   ANIMATION OPTIMIZATIONS
-   ================================= */
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {

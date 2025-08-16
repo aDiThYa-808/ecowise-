@@ -57,7 +57,7 @@ export class HomePageComponent implements AfterViewChecked, OnInit, OnDestroy {
   checkServerHealth(): void {
     this.isCheckingHealth = true;
     
-    this.http.get('http://localhost:3000/api/health', {
+    this.http.get('https://ecowise-qmb1.onrender.com/api/health', {
       responseType: 'text', // Expect text response, not JSON
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ export class HomePageComponent implements AfterViewChecked, OnInit, OnDestroy {
 
     // Call backend
     this.http.post<any>(
-      'http://localhost:3000/watsonx/query',
+      'https://ecowise-qmb1.onrender.com/watsonx/query',
       { prompt: message.trim() },
       {
         headers: new HttpHeaders({

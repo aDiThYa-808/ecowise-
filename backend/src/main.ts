@@ -6,11 +6,7 @@ async function bootstrap() {
   
   // Enable CORS for Angular frontend
   app.enableCors({
-    origin: [
-      'http://localhost:4200', 
-      'http://127.0.0.1:4200',
-      'https://ecowise-chi.vercel.app'
-    ],
+    origin: true, // Temporarily allow all origins for debugging
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
